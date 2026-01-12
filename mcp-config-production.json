@@ -1,0 +1,34 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/mcp-config.json",
+  "_comment": "Production configuration with strict target allowlisting",
+  "mcpServers": {
+    "kali-security": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--name", "kali-mcp-server",
+        "--network", "host",
+        "--memory", "2g",
+        "--cpus", "2",
+        "--read-only",
+        "--tmpfs", "/tmp:rw,noexec,nosuid,size=500m",
+        "-e", "MCP_ALLOWED_TARGETS",
+        "-e", "MCP_BLOCKED_TARGETS",
+        "-e", "MCP_TIMEOUT",
+        "-e", "MCP_RATE_LIMIT",
+        "-e", "MCP_LOG_LEVEL",
+        "kali-mcp-server:latest"
+      ],
+      "env": {
+        "_comment_allowed": "IMPORTANT: Set this to ONLY your authorized targets",
+        "MCP_ALLOWED_TARGETS": "*.your-domain.com,test.your-domain.com,192.168.100.0/24",
+        "MCP_BLOCKED_TARGETS": "localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,169.254.0.0/16,224.0.0.0/4",
+        "MCP_TIMEOUT": "300",
+        "MCP_RATE_LIMIT": "10",
+        "MCP_LOG_LEVEL": "WARNING"
+      }
+    }
+  }
+}

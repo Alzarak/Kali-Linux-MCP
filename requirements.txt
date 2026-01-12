@@ -1,0 +1,25 @@
+# MCP Server Dependencies
+# For Kali Linux Security Tools MCP Server
+
+# MCP SDK for Python - official implementation
+mcp>=1.0.0
+
+# Async support
+anyio>=4.0.0
+asyncio-throttle>=1.0.0
+
+# Input validation
+pydantic>=2.0.0
+
+# Network utilities for target validation
+ipaddress
+dnspython>=2.4.0
+
+# JSON handling (stdlib but explicit for clarity)
+# json is built-in
+
+# Logging enhancements
+structlog>=23.0.0
+
+# Type hints
+typing-extensions>=4.8.0

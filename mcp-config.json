@@ -1,0 +1,28 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/mcp-config.json",
+  "mcpServers": {
+    "kali-security": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--name", "kali-mcp-server",
+        "--network", "host",
+        "-e", "MCP_ALLOWED_TARGETS",
+        "-e", "MCP_BLOCKED_TARGETS",
+        "-e", "MCP_TIMEOUT",
+        "-e", "MCP_RATE_LIMIT",
+        "-e", "MCP_LOG_LEVEL",
+        "kali-mcp-server:latest"
+      ],
+      "env": {
+        "MCP_ALLOWED_TARGETS": "",
+        "MCP_BLOCKED_TARGETS": "localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16",
+        "MCP_TIMEOUT": "300",
+        "MCP_RATE_LIMIT": "5",
+        "MCP_LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}

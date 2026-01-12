@@ -1,0 +1,65 @@
+# Docker Compose for local development and testing
+# NOT for production use with Docker Desktop MCP Servers
+
+version: '3.8'
+
+services:
+  kali-mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: kali-mcp-server:latest
+    container_name: kali-mcp-dev
+    stdin_open: true
+    tty: false
+    network_mode: host
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+
+    # Environment configuration
+    environment:
+      # IMPORTANT: Configure allowed targets for testing
+      # For testing, use a vulnerable-by-design target like scanme.nmap.org
+      - MCP_ALLOWED_TARGETS=scanme.nmap.org,testphp.vulnweb.com
+
+      # Default blocked targets (internal networks)
+      - MCP_BLOCKED_TARGETS=localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+
+      # Scan settings
+      - MCP_TIMEOUT=300
+      - MCP_RATE_LIMIT=5
+      - MCP_LOG_LEVEL=DEBUG
+
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+
+    # Read-only filesystem with temp directories
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=500m
+      - /home/mcpuser/.local:rw,noexec,nosuid,size=100m
+
+  # Optional: Vulnerable test target for development
+  # DVWA (Damn Vulnerable Web Application)
+  dvwa:
+    image: vulnerables/web-dvwa:latest
+    container_name: dvwa-test
+    ports:
+      - "8080:80"
+    profiles:
+      - testing
+    environment:
+      - MYSQL_DATABASE=dvwa
+      - MYSQL_USER=dvwa
+      - MYSQL_PASSWORD=p@ssw0rd
+      - MYSQL_ROOT_PASSWORD=root
+
+# Development configuration
+# To run: docker compose up -d
+# To include test target: docker compose --profile testing up -d
