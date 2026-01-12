@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     wget \
     git \
+    unzip \
     dnsutils \
     && rm -rf /var/lib/apt/lists/*
 
