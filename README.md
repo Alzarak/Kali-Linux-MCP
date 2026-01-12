@@ -1,8 +1,20 @@
 # Kali Linux MCP Server for Docker Desktop
 
-A Model Context Protocol (MCP) server that exposes Kali Linux security testing tools to LLM clients via Docker Desktop's MCP Servers feature.
+> [!CAUTION]
+> **LEGAL WARNING: AUTHORIZED USE ONLY**
+>
+> This software contains security testing tools that **MUST ONLY** be used against systems you own or have **explicit written permission** to test. Unauthorized scanning, testing, or access to computer systems is **illegal** in most jurisdictions and may result in criminal prosecution.
+>
+> **Before using this tool, you must:**
+> - Have written authorization from the system owner
+> - Understand applicable laws (CFAA, Computer Misuse Act, etc.)
+> - Accept full legal responsibility for your actions
+>
+> The authors provide this software for **defensive security testing** and accept no liability for misuse.
 
-> **WARNING**: This tool is for **authorized security testing only**. Only use against systems you own or have explicit written permission to test. Unauthorized scanning or testing is illegal.
+---
+
+A Model Context Protocol (MCP) server that exposes Kali Linux security testing tools to LLM clients via Docker Desktop's MCP Servers feature.
 
 ## Overview
 
