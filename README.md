@@ -74,41 +74,135 @@ This MCP server provides a safe, containerized interface to common penetration t
 
 ### Prerequisites
 
-- Docker Desktop with MCP Servers support
+- Docker Desktop 4.42+ (Windows) or 4.40+ (macOS) with MCP Toolkit enabled
 - Basic understanding of security testing concepts
 
 ### Installation
 
-1. **Build the Docker image:**
+#### Step 1: Enable Docker MCP Toolkit
+
+1. Open Docker Desktop
+2. Go to **Settings** → **Beta features**
+3. Enable **Docker MCP Toolkit**
+4. Click **Apply & restart**
+
+#### Step 2: Build the Docker Image
 
 ```bash
 docker build -t kali-mcp-server .
 ```
 
-2. **Add to Docker Desktop MCP Servers:**
+#### Step 3: Create a Custom MCP Catalog
 
-Open Docker Desktop → Settings → MCP Servers → Add Server
+```bash
+# Create a new catalog for your security tools
+docker mcp catalog create security-tools
+```
 
-Use this configuration:
+#### Step 4: Create Server Definition
+
+Create a file `kali-server.yaml` with your server definition:
+
+```yaml
+name: kali-security
+description: "Kali Linux security testing tools (nmap, nikto, sqlmap, etc.)"
+image: kali-mcp-server:latest
+config:
+  MCP_ALLOWED_TARGETS:
+    description: "Comma-separated list of allowed target patterns"
+    required: false
+  MCP_BLOCKED_TARGETS:
+    description: "Comma-separated list of blocked targets"
+    required: false
+    default: "localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+  MCP_TIMEOUT:
+    description: "Command timeout in seconds"
+    required: false
+    default: "300"
+```
+
+#### Step 5: Add Server to Catalog
+
+```bash
+docker mcp catalog add security-tools kali-security ./kali-server.yaml
+```
+
+#### Step 6: Enable and Configure the Server
+
+```bash
+# Enable the server
+docker mcp server enable kali-security
+
+# Configure allowed targets (IMPORTANT: set this to your authorized targets)
+docker mcp config set kali-security MCP_ALLOWED_TARGETS "*.your-domain.com,192.168.100.0/24"
+```
+
+#### Step 7: Connect to Clients
+
+**For Claude Desktop:**
+
+The MCP Toolkit can auto-configure Claude Desktop. Click **Connect** in the MCP Toolkit UI, or manually add to `claude_desktop_config.json`:
 
 ```json
 {
-  "kali-security": {
-    "command": "docker",
-    "args": [
-      "run", "-i", "--rm",
-      "--network", "host",
-      "-e", "MCP_ALLOWED_TARGETS",
-      "kali-mcp-server"
-    ],
-    "env": {
-      "MCP_ALLOWED_TARGETS": "*.example.com,192.168.1.0/24"
+  "mcpServers": {
+    "docker-mcp-gateway": {
+      "command": "docker",
+      "args": ["mcp", "gateway", "run"]
     }
   }
 }
 ```
 
-3. **Restart Docker Desktop** to load the new MCP server.
+**For VS Code / Cursor:**
+
+Add to your MCP configuration (`mcp.json`):
+
+```json
+{
+  "servers": {
+    "docker-mcp-gateway": {
+      "type": "stdio",
+      "command": "docker",
+      "args": ["mcp", "gateway", "run", "--catalog", "security-tools"]
+    }
+  }
+}
+```
+
+#### Alternative: Direct Docker Run (Without MCP Toolkit)
+
+If you prefer not to use Docker MCP Toolkit, you can run the server directly and configure your MCP client manually:
+
+```json
+{
+  "mcpServers": {
+    "kali-security": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "--network", "host",
+        "-e", "MCP_ALLOWED_TARGETS=*.your-domain.com",
+        "-e", "MCP_BLOCKED_TARGETS=localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16",
+        "kali-mcp-server"
+      ]
+    }
+  }
+}
+```
+
+#### Step 8: Verify Installation
+
+Test with Docker AI (if available):
+```bash
+docker ai "Use the kali-security tools to scan scanme.nmap.org for open ports"
+```
+
+Or check the gateway status:
+```bash
+docker mcp server list
+docker mcp gateway status
+```
 
 ## Configuration
 

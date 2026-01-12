@@ -1,0 +1,37 @@
+# Kali Linux MCP Server Definition
+# Use this file to add the server to Docker MCP Toolkit
+#
+# Usage:
+#   docker mcp catalog create security-tools
+#   docker mcp catalog add security-tools kali-security ./kali-server.yaml
+
+name: kali-security
+description: |
+  Kali Linux security testing tools for authorized penetration testing.
+  Includes: nmap, nikto, sqlmap, ffuf, gobuster, testssl.sh, nuclei.
+  WARNING: Only use against systems you own or have written authorization to test.
+image: kali-mcp-server:latest
+repository: https://github.com/your-username/kali-linux-mcp
+
+# Environment variable configuration
+config:
+  MCP_ALLOWED_TARGETS:
+    description: "Comma-separated list of allowed target patterns (wildcards and CIDR supported)"
+    required: false
+    default: ""
+  MCP_BLOCKED_TARGETS:
+    description: "Comma-separated list of blocked targets (default blocks internal networks)"
+    required: false
+    default: "localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+  MCP_TIMEOUT:
+    description: "Default command timeout in seconds"
+    required: false
+    default: "300"
+  MCP_RATE_LIMIT:
+    description: "Minimum seconds between scans to same target"
+    required: false
+    default: "5"
+  MCP_LOG_LEVEL:
+    description: "Logging verbosity (DEBUG, INFO, WARNING, ERROR)"
+    required: false
+    default: "INFO"

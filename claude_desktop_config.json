@@ -1,0 +1,35 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/claude-desktop/main/config-schema.json",
+  "_comment": "Claude Desktop MCP configuration for Kali Linux security tools",
+  "_instructions": [
+    "Option 1: Use Docker MCP Gateway (recommended if using Docker MCP Toolkit)",
+    "Option 2: Direct connection to Kali MCP server container",
+    "",
+    "Copy the appropriate mcpServers section to your Claude Desktop config:",
+    "  macOS: ~/Library/Application Support/Claude/claude_desktop_config.json",
+    "  Windows: %APPDATA%\\Claude\\claude_desktop_config.json"
+  ],
+
+  "mcpServers": {
+    "_option1_docker_gateway": {
+      "_comment": "Use this if you have Docker MCP Toolkit enabled and server added to catalog",
+      "command": "docker",
+      "args": ["mcp", "gateway", "run"]
+    },
+
+    "kali-security": {
+      "_comment": "Direct connection - use this for standalone setup without MCP Toolkit",
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "--network", "host",
+        "-e", "MCP_ALLOWED_TARGETS=scanme.nmap.org,testphp.vulnweb.com",
+        "-e", "MCP_BLOCKED_TARGETS=localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16",
+        "-e", "MCP_TIMEOUT=300",
+        "-e", "MCP_RATE_LIMIT=5",
+        "-e", "MCP_LOG_LEVEL=INFO",
+        "kali-mcp-server"
+      ]
+    }
+  }
+}
